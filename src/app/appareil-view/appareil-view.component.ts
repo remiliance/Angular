@@ -51,4 +51,9 @@ onEteindre() {
       this.appareilService.switchOffAll();
     }
 
+
+    onFetch() {
+    this.appareilService.getAppareilsFromServer();
+}
+
 }

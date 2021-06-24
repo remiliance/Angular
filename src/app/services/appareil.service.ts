@@ -1,5 +1,8 @@
 import { Subject } from 'rxjs/Subject';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
+@Injectable()
 export class AppareilService {
 
   appareilsSubject = new Subject<any[]>();
@@ -21,6 +24,8 @@ export class AppareilService {
       status: 'éteint'
     }
 ];
+
+ constructor(private httpClient: HttpClient) { }
 
 emitAppareilSubject() {
     this.appareilsSubject.next(this.appareils.slice());
@@ -58,5 +63,34 @@ getAppareilById(id: number) {
     );
     return appareil;
 }
+
+addAppareil(name: string, status: string) {
+    const appareilObject = {
+      id: 0,
+      name: '',
+      status: ''
+    };
+    appareilObject.name = name;
+    appareilObject.status = status;
+    appareilObject.id = this.appareils[(this.appareils.length - 1)].id + 1;
+    this.appareils.push(appareilObject);
+    this.emitAppareilSubject();
+}
+
+getAppareilsFromServer() {
+    this.httpClient
+      .get<any[]>('http://localhost:8080/employees')
+      .subscribe(
+        (response) => {
+          this.appareils = response;
+          this.emitAppareilSubject();
+        },
+        (error) => {
+          console.log('Erreur ! : ' + error);
+        }
+      );
+}
+
+
 
 }
